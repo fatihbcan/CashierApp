@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "220104794997",
+    "project_id": "cashier-app-43de3",
+    "storage_bucket": "cashier-app-43de3.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:220104794997:android:25d773be7b8436228de93c",
+        "android_client_info": {
+          "package_name": "com.example.jirataskmvvm"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "220104794997-67bqbap7fvrdac2h47m6f386hatjt96q.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBvZ71exvZXjec_2Ad3S5sTmAJz_OIRdY4"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "220104794997-67bqbap7fvrdac2h47m6f386hatjt96q.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
