@@ -11,6 +11,10 @@ import com.example.cashierapp.databinding.FragmentCustomerBinding
 import dagger.hilt.android.AndroidEntryPoint
 import android.graphics.Bitmap
 import android.graphics.Color
+import androidx.core.content.ContextCompat
+import androidx.fragment.app.viewModels
+import com.example.cashierapp.utils.Progress
+import com.example.cashierapp.viewmodel.CustomerViewModel
 
 import com.google.zxing.BarcodeFormat
 
@@ -30,17 +34,40 @@ class CustomerFragment : Fragment(R.layout.fragment_customer) {
     private val WIDTH = 500
 
 
+    private val customerViewModel : CustomerViewModel by viewModels()
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
         _binding = FragmentCustomerBinding.bind(view)
 
+        customerViewModel.status.observe(viewLifecycleOwner){
+            when(it){
+                Progress.IN_PROGRESS.value -> binding.root.setBackgroundColor(Color.YELLOW)
+                Progress.SUCCESS.value -> binding.root.setBackgroundColor(Color.GREEN)
+                Progress.FAIL.value -> binding.root.setBackgroundColor(Color.RED)
+            }
+
+            if(it.isNullOrEmpty() || it.equals(Progress.IDLE.value, true)){
+                binding.qrCode.visibility = View.VISIBLE
+                binding.resultText.visibility = View.GONE
+            } else {
+                binding.qrCode.visibility = View.GONE
+                binding.resultText.visibility = View.VISIBLE
+            }
+
+            binding.resultText.text = it
+        }
+
         try {
-            val bmp = encodeAsBitmap("Hello world!")
+            val bmp = encodeAsBitmap(customerViewModel.getAuthToken())
             binding.qrCode.setImageBitmap(bmp)
         } catch (e: Exception) {
             e.printStackTrace()
         }
+
+        customerViewModel.eventListener()
+
     }
 
 

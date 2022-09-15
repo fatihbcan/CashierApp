@@ -13,8 +13,11 @@ import android.view.ViewGroup
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.app.ActivityCompat
+import androidx.fragment.app.viewModels
 import com.example.cashierapp.R
 import com.example.cashierapp.databinding.FragmentCashierBinding
+import com.example.cashierapp.utils.Progress
+import com.example.cashierapp.viewmodel.CashierViewModel
 import com.google.zxing.Result
 import com.google.zxing.qrcode.QRCodeReader
 import com.google.zxing.qrcode.QRCodeWriter
@@ -27,13 +30,36 @@ class CashierFragment : Fragment(R.layout.fragment_cashier) , ZXingScannerView.R
     private var _binding : FragmentCashierBinding? = null
     private val binding get() = _binding!!
     private lateinit var scannerView: ZXingScannerView
-    private lateinit var requestPermissionLauncher: ActivityResultLauncher<String>
+
+    private val viewModel : CashierViewModel by viewModels()
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         _binding = FragmentCashierBinding.bind(view)
 
         scannerView = binding.scanner
+
+        viewModel.customerToken.observe(viewLifecycleOwner){
+            if(it.isNullOrEmpty()){
+                binding.buttonLayout.visibility = View.GONE
+                binding.scanner.visibility = View.VISIBLE
+            } else {
+                binding.buttonLayout.visibility = View.VISIBLE
+                binding.scanner.visibility = View.GONE
+            }
+        }
+
+        binding.fail.setOnClickListener {
+            viewModel.updateData(Progress.FAIL.value)
+        }
+
+        binding.success.setOnClickListener {
+            viewModel.updateData(Progress.SUCCESS.value)
+        }
+
+        binding.progress.setOnClickListener {
+            viewModel.updateData(Progress.IN_PROGRESS.value)
+        }
 
     }
 
@@ -51,9 +77,8 @@ class CashierFragment : Fragment(R.layout.fragment_cashier) , ZXingScannerView.R
     override fun handleResult(rawResult: Result?) {
 
         if(rawResult != null){
-            Log.d("Fatih","result : "+rawResult!!.text)
             scannerView.stopCamera() // Stop camera on pause
-            scannerView.visibility = View.GONE
+            viewModel.updateToken(rawResult.text)
         }
     }
 

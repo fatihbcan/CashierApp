@@ -4,15 +4,20 @@ import android.Manifest
 import android.content.Context
 import android.content.pm.PackageManager
 import android.os.Bundle
+import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.app.ActivityCompat
+import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import com.example.cashierapp.R
 import com.example.cashierapp.databinding.FragmentHomeBinding
+import com.example.cashierapp.utils.UserTypes
+import com.example.cashierapp.viewmodel.HomeFragmentViewModel
+import com.google.firebase.firestore.FirebaseFirestore
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -21,6 +26,7 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
     private var _binding : FragmentHomeBinding? = null
     private val binding get() = _binding!!
 
+    private val viewModel : HomeFragmentViewModel by viewModels()
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -28,19 +34,32 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
         _binding = FragmentHomeBinding.bind(view)
 
 
+        viewModel.navigationDecider.observe(viewLifecycleOwner){
+            when(it){
+                UserTypes.CUSTOMER.value -> {
+                    val action = HomeFragmentDirections.actionHomeFragmentToCustomerFragment()
+                    findNavController().navigate(action)
+                    viewModel.setNavDefault()
+                }
+                UserTypes.CASHIER.value -> {
+                    goCashierFragment()
+                    viewModel.setNavDefault()
+                }
+            }
+        }
+
+
         binding.cashierCard.setOnClickListener {
-            goCashierFragment()
+            viewModel.processFirebaseActionsAndNavigate(UserTypes.CASHIER.value)
         }
 
         binding.customerCard.setOnClickListener{
-            val action = HomeFragmentDirections.actionHomeFragmentToCustomerFragment()
-            findNavController().navigate(action)
+            viewModel.processFirebaseActionsAndNavigate(UserTypes.CUSTOMER.value)
         }
     }
 
 
     companion object {
-        val TAG: String = CashierFragment::class.java.simpleName
         var PERMISSIONS = arrayOf(
             Manifest.permission.CAMERA
         )
@@ -77,6 +96,5 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
         val action = HomeFragmentDirections.actionHomeFragmentToCashierFragment()
         findNavController().navigate(action)
     }
-
 
 }
