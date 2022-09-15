@@ -79,6 +79,7 @@ class CashierFragment : Fragment(R.layout.fragment_cashier) , ZXingScannerView.R
         if(rawResult != null){
             scannerView.stopCamera() // Stop camera on pause
             viewModel.updateToken(rawResult.text)
+            viewModel.sendQRReadedLog()
         }
     }
 

@@ -19,6 +19,7 @@ import com.example.cashierapp.utils.UserTypes
 import com.example.cashierapp.viewmodel.HomeFragmentViewModel
 import com.google.firebase.firestore.FirebaseFirestore
 import dagger.hilt.android.AndroidEntryPoint
+import java.lang.Exception
 
 @AndroidEntryPoint
 class HomeFragment : Fragment(R.layout.fragment_home) {
@@ -33,6 +34,9 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
 
         _binding = FragmentHomeBinding.bind(view)
 
+        binding.crashTester.setOnLongClickListener {
+            throw Exception("crash test")
+        }
 
         viewModel.navigationDecider.observe(viewLifecycleOwner){
             when(it){

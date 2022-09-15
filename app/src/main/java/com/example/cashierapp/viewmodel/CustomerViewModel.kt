@@ -4,6 +4,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.example.cashierapp.utils.Constants
+import com.example.cashierapp.utils.EventLogger
 import com.example.cashierapp.utils.Progress
 import com.example.cashierapp.utils.UserTypes
 import com.google.firebase.auth.FirebaseAuth
@@ -15,13 +16,17 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 
 @HiltViewModel
-class CustomerViewModel @Inject constructor(): ViewModel() {
+class CustomerViewModel @Inject constructor(private val eventLogger: EventLogger): ViewModel() {
 
     private val _status = MutableLiveData<String>(Progress.IDLE.value)
     val status : LiveData<String> = _status
 
     private val auth: FirebaseAuth = Firebase.auth
     private val db: FirebaseFirestore = FirebaseFirestore.getInstance()
+
+    fun sendQRGeneraterLog(){
+        eventLogger.sendLogWithBundle("QR_OPERATION","GENERATED")
+    }
 
     fun getAuthToken(): String = auth.uid!!
 

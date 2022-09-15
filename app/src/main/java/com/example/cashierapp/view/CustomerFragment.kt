@@ -62,6 +62,7 @@ class CustomerFragment : Fragment(R.layout.fragment_customer) {
         try {
             val bmp = encodeAsBitmap(customerViewModel.getAuthToken())
             binding.qrCode.setImageBitmap(bmp)
+            customerViewModel.sendQRGeneraterLog()
         } catch (e: Exception) {
             e.printStackTrace()
         }

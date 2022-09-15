@@ -5,6 +5,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.example.cashierapp.utils.Constants
+import com.example.cashierapp.utils.EventLogger
 import com.example.cashierapp.utils.UserTypes
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.ktx.auth
@@ -14,13 +15,17 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 
 @HiltViewModel
-class CashierViewModel @Inject constructor(): ViewModel() {
+class CashierViewModel @Inject constructor(private val eventLogger: EventLogger): ViewModel() {
 
     private val _customerToken = MutableLiveData("")
     val customerToken : LiveData<String> = _customerToken
 
     private val auth: FirebaseAuth = Firebase.auth
     private val db: FirebaseFirestore = FirebaseFirestore.getInstance()
+
+    fun sendQRReadedLog(){
+        eventLogger.sendLogWithBundle("QR_OPERATION","READED")
+    }
 
     fun updateToken(token: String){
         _customerToken.value = token
